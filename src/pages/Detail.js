@@ -7,10 +7,26 @@ export default class Detail extends Component {
     super(props);
     const id = this.props.match.params.id;
     this.state = {
-      recipe: recipeData,
+      recipe: {},
       id,
-      loading: false
+      loading: true
     };
+  }
+
+  async componentDidMount() {
+    const url = `https://www.food2fork.com/api/get?key=${
+      process.env.REACT_APP_API_KEY
+    }&rId=${this.state.id}`;
+    try {
+      const response = await fetch(url);
+      const responseData = await response.json();
+      this.setState({
+        recipe: responseData.recipe,
+        loading: false
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }
   render() {
     const {
@@ -74,7 +90,7 @@ export default class Detail extends Component {
               Recipe url
             </a>
             <ul className="list-group mt-4">
-              <h2 className="mt-3 mb-">Ingredients</h2>
+              <h2 className="mt-3 mb-4">Ingredients</h2>
               {ingredients.map((item, index) => {
                 return (
                   <li key={index} className="list-group-item text-slanted">
